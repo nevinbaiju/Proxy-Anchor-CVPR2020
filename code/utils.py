@@ -136,7 +136,7 @@ def evaluate_cos_SOP(model, dataloader):
     X = l2_norm(X)
     
     # get predictions by assigning nearest 8 neighbors with cosine
-    K = 1000
+    K = 400
     Y = []
     xs = []
     for x in X:
@@ -159,7 +159,7 @@ def evaluate_cos_SOP(model, dataloader):
 
     # calculate recall @ 1, 2, 4, 8
     recall = []
-    for k in [1, 10, 100, 1000]:
+    for k in [1, 2, 3, 4]:
         r_at_k = calc_recall_at_k(T, Y, k)
         recall.append(r_at_k)
         print("R@{} : {:.3f}".format(k, 100 * r_at_k))
