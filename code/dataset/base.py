@@ -16,7 +16,7 @@ class BaseDataset(torch.utils.data.Dataset):
         self.ys, self.im_paths, self.I = [], [], []
 
     def nb_classes(self):
-        return len(df[0].unique())
+        return len(set(self.ys))
 
     def __len__(self):
         return len(self.ys)

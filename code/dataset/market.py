@@ -1,4 +1,4 @@
-from base import *
+from .base import *
 
 class Market(BaseDataset):
     def __init__(self, root, mode, transform = None):
@@ -6,18 +6,18 @@ class Market(BaseDataset):
         self.mode = mode
 
         gt_bbox = [os.path.join(self.root, 'gt_bbox', x) for x in os.listdir(os.path.join(self.root, 'gt_bbox'))]
-        bbox_train = [os.path.join(self.root, 'bounding_box_train', x) for x in os.listdir(os.path.join(self.root, 'gt_bbox'))]
+        bbox_train = [os.path.join(self.root, 'bounding_box_train', x) for x in os.listdir(os.path.join(self.root, 'bounding_box_train'))]
         train_images = gt_bbox + bbox_train
         
         self.transform = transform
         if self.mode == 'train':
-            self.classes = range(0,1000)
+            self.classes = range(0,100)
         elif self.mode == 'eval':
             self.classes = range(1000,1501)
                 
         BaseDataset.__init__(self, self.root, self.mode, self.transform)
         
-        ys = [int(image.split('/')[-1].split('_')[0]) for image in train_images[:4]]
+        ys = [int(image.split('/')[-1].split('_')[0]) for image in train_images]
         index = 0
         self.im_paths = []
         for im_path, y in zip(train_images, ys):

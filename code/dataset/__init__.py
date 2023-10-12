@@ -1,7 +1,7 @@
 from .cars import Cars
 from .cub import CUBirds
 from .SOP import SOP
-from .seeds import SeedsFolderLoader
+from .market import Market
 from .import utils
 from .base import BaseDataset
 
@@ -10,7 +10,7 @@ _type = {
     'cars': Cars,
     'cub': CUBirds,
     'SOP': SOP,
-    'seeds': SeedsFolderLoader
+    'market': Market
 }
 
 def load(name, root, mode, transform = None):
