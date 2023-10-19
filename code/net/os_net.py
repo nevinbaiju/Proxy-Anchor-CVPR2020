@@ -290,12 +290,10 @@ class OSNet(nn.Module):
 
     def __init__(
         self,
-        num_classes,
         blocks,
         layers,
         channels,
         feature_dim=512,
-        loss='softmax',
         IN=False,
         **kwargs
     ):
@@ -303,7 +301,6 @@ class OSNet(nn.Module):
         num_blocks = len(blocks)
         assert num_blocks == len(layers)
         assert num_blocks == len(channels) - 1
-        self.loss = loss
         self.feature_dim = feature_dim
 
         # convolutional backbone
@@ -337,8 +334,6 @@ class OSNet(nn.Module):
         self.fc = self._construct_fc_layer(
             self.feature_dim, channels[3], dropout_p=None
         )
-        # identity classification layer
-        self.classifier = nn.Linear(self.feature_dim, num_classes)
 
         self._init_params()
 
@@ -418,25 +413,14 @@ class OSNet(nn.Module):
         x = self.conv4(x)
         x = self.conv5(x)
         return x
-
+        
     def forward(self, x, return_featuremaps=False):
         x = self.featuremaps(x)
-        if return_featuremaps:
-            return x
         v = self.global_avgpool(x)
         v = v.view(v.size(0), -1)
-        if self.fc is not None:
-            v = self.fc(v)
-        if not self.training:
-            return v
-        y = self.classifier(v)
-        if self.loss == 'softmax':
-            return y
-        elif self.loss == 'triplet':
-            return y, v
-        else:
-            raise KeyError("Unsupported loss: {}".format(self.loss))
-
+        v = self.fc(v)
+        
+        return v
 
 def init_pretrained_weights(model, key=''):
     """Initializes model with pretrained weights.
@@ -585,11 +569,9 @@ def osnet_ibn_x1_0(
     # standard size (width x1.0) + IBN layer
     # Ref: Pan et al. Two at Once: Enhancing Learning and Generalization Capacities via IBN-Net. ECCV, 2018.
     model = OSNet(
-        num_classes,
         blocks=[OSBlock, OSBlock, OSBlock],
         layers=[2, 2, 2],
         channels=[64, 256, 384, 512],
-        loss=loss,
         IN=True,
         **kwargs
     )
